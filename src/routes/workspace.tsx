@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Briefcase, FileText, Mail, Loader2, Upload, X, Sparkles, Coffee, Lightbulb } from "lucide-react";
 import { analyzeApplication } from "@/lib/analysis.functions";
 import { saveReport } from "@/lib/analysis-types";
 import { HRGuide } from "@/components/HRGuide";
+import { useAuth } from "@/hooks/useAuth";
 import { OfficeShell } from "@/components/OfficeShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";

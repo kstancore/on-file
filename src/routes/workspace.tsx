@@ -14,17 +14,19 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/workspace")({
   head: () => ({
     meta: [
-      { title: "On File — Know Why You Got Rejected, Then Fix It" },
+      { title: "Workspace — Analyse Your Rejection | On File" },
       {
         name: "description",
         content:
-          "Upload your job description, resume and rejection email. Shanthi, our senior recruiter, explains why you were rejected and exactly what to improve.",
+          "Your private desk: drop in the job description, resume and rejection email and Shanthi returns a full breakdown of why it went the other way.",
       },
-      { property: "og:title", content: "On File — Know Why You Got Rejected, Then Fix It" },
+      { property: "og:title", content: "Workspace — Analyse Your Rejection | On File" },
       {
         property: "og:description",
-        content: "A clear rejection post-mortem: missing skills, resume gaps and a 90-day plan to land the role.",
+        content: "Paste or attach your three documents and get a fit score, missing skills and a comeback plan.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: FrontDesk,
@@ -36,10 +38,16 @@ const MAX_BYTES = 8 * 1024 * 1024;
 
 function FrontDesk() {
   const navigate = useNavigate();
+  const { session, loading: authLoading } = useAuth();
   const analyze = useServerFn(analyzeApplication);
   const [text, setText] = useState<Record<Slot, string>>({ jd: "", resume: "", email: "" });
   const [files, setFiles] = useState<Partial<Record<Slot, { name: string; mimeType: string; dataUrl: string }>>>({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !session) navigate({ to: "/signin", replace: true });
+  }, [authLoading, session, navigate]);
+
 
   async function attach(slot: Slot, file: File | undefined) {
     if (!file) return;

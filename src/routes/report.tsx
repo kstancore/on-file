@@ -13,7 +13,7 @@ export const Route = createFileRoute("/report")({
       {
         name: "description",
         content:
-          "Nia's honest breakdown of your rejection: fit score, missing skills, resume gaps and a step-by-step comeback plan.",
+          "Shanthi's honest breakdown of your rejection: fit score, missing skills, resume gaps and a step-by-step comeback plan.",
       },
       { property: "og:title", content: "Your Rejection Report — On File" },
       {

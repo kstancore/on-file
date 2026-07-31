@@ -1,12 +1,23 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Coffee, Paperclip, FolderOpen } from "lucide-react";
+import { Coffee, Paperclip, FolderOpen, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 
 export function OfficeShell({ children }: { children: ReactNode }) {
+  const { session, loading } = useAuth();
+  const navigate = useNavigate();
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/signin", replace: true });
+  }
+
   return (
     <div className="min-h-screen paper-grid">
       <header className="border-b border-border bg-card/70 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-4">
           <Link to="/" className="flex items-center gap-2">
             <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <FolderOpen className="size-5" />
@@ -15,11 +26,23 @@ export function OfficeShell({ children }: { children: ReactNode }) {
           </Link>
           <nav className="flex items-center gap-4 text-sm text-muted-foreground">
             <Link to="/" className="transition-colors hover:text-foreground">
-              Front desk
+              Home
+            </Link>
+            <Link to="/workspace" className="transition-colors hover:text-foreground">
+              Workspace
             </Link>
             <Link to="/report" className="transition-colors hover:text-foreground">
               My report
             </Link>
+            {loading ? null : session ? (
+              <button onClick={signOut} className="flex items-center gap-1.5 transition-colors hover:text-foreground">
+                <LogOut className="size-3.5" /> Sign out
+              </button>
+            ) : (
+              <Button asChild size="sm">
+                <Link to="/signin">Sign in</Link>
+              </Button>
+            )}
             <Coffee className="size-4 text-desk" aria-hidden />
           </nav>
         </div>

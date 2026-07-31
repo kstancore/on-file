@@ -32,7 +32,7 @@ export function HRGuide({ pose = "greeting", line, className = "", size = "md", 
         className={`${sizes[size]} shrink-0 select-none drop-shadow-sm`}
       />
       {line ? (
-        <div className="relative mb-6 max-w-xs rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-3 text-sm leading-relaxed text-card-foreground shadow-desk">
+        <div className="relative mb-6 w-48 shrink-0 rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-3 text-sm leading-relaxed text-card-foreground shadow-desk sm:w-64">
           <span className="mb-1 block font-display text-xs uppercase tracking-widest text-muted-foreground">
             Nia · Senior Recruiter
           </span>

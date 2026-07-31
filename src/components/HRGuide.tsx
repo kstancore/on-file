@@ -25,7 +25,7 @@ export function HRGuide({ pose = "greeting", line, className = "", size = "md", 
     <div className={`flex items-end gap-3 ${className}`}>
       <img
         src={poses[pose]}
-        alt="Nia, your senior recruiter guide"
+        alt="Shanthi, your senior recruiter guide"
         width={768}
         height={1024}
         loading={priority ? "eager" : "lazy"}
@@ -34,7 +34,7 @@ export function HRGuide({ pose = "greeting", line, className = "", size = "md", 
       {line ? (
         <div className="relative mb-6 w-48 shrink-0 rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-3 text-sm leading-relaxed text-card-foreground shadow-desk sm:w-64">
           <span className="mb-1 block font-display text-xs uppercase tracking-widest text-muted-foreground">
-            Nia · Senior Recruiter
+            Shanthi · Senior Recruiter
           </span>
           {line}
         </div>

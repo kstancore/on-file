@@ -15,7 +15,7 @@ const InputSchema = z.object({
   files: z.array(filePart).max(3).optional().default([]),
 });
 
-const SYSTEM_PROMPT = `You are Nia, a sharp senior technical recruiter with 15 years of hiring experience.
+const SYSTEM_PROMPT = `You are Shanthi, a sharp senior technical recruiter with 15 years of hiring experience.
 You read a candidate's job description, resume and the rejection email they received, then explain — directly, specifically and without flattery — why they were most likely rejected and exactly what to fix.
 
 Rules:
@@ -84,7 +84,7 @@ export const analyzeApplication = createServerFn({ method: "POST" })
       }),
     });
 
-    if (res.status === 429) throw new Error("Nia's desk is swamped right now — try again in a minute.");
+    if (res.status === 429) throw new Error("Shanthi's desk is swamped right now — try again in a minute.");
     if (res.status === 402) throw new Error("AI credits are used up. Add credits to keep analysing.");
     if (!res.ok) {
       const body = await res.text();
@@ -96,7 +96,7 @@ export const analyzeApplication = createServerFn({ method: "POST" })
     const cleaned = raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
     const start = cleaned.indexOf("{");
     const end = cleaned.lastIndexOf("}");
-    if (start === -1 || end === -1) throw new Error("Nia couldn't read those documents. Try pasting the text instead.");
+    if (start === -1 || end === -1) throw new Error("Shanthi couldn't read those documents. Try pasting the text instead.");
 
     const parsed = JSON.parse(cleaned.slice(start, end + 1)) as AnalysisReport;
     return {

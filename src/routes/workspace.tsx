@@ -11,14 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/workspace")({
   head: () => ({
     meta: [
       { title: "On File — Know Why You Got Rejected, Then Fix It" },
       {
         name: "description",
         content:
-          "Upload your job description, resume and rejection email. Nia, our senior recruiter, explains why you were rejected and exactly what to improve.",
+          "Upload your job description, resume and rejection email. Shanthi, our senior recruiter, explains why you were rejected and exactly what to improve.",
       },
       { property: "og:title", content: "On File — Know Why You Got Rejected, Then Fix It" },
       {
@@ -66,7 +66,7 @@ function FrontDesk() {
       dataUrl: string;
     }>;
     if (!text.jd.trim() && !text.resume.trim() && !text.email.trim() && attached.length === 0) {
-      toast.error("Nia needs at least the job description and your resume.");
+      toast.error("Shanthi needs at least the job description and your resume.");
       return;
     }
     setLoading(true);
@@ -128,7 +128,7 @@ function FrontDesk() {
             </span>
             <h1 className="mt-5 text-4xl leading-[1.05] sm:text-5xl">
               They said “we decided to move forward with other candidates”.
-              <span className="block text-primary">Nia will tell you what that actually meant.</span>
+              <span className="block text-primary">Shanthi will tell you what that actually meant.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
               Drop in the job description, your resume and the rejection email. You get an honest read of why the
@@ -213,7 +213,7 @@ function FrontDesk() {
             <Button size="lg" onClick={onSubmit} disabled={loading} className="w-full sm:w-auto">
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 size-4 animate-spin" /> Nia is reading your file…
+                  <Loader2 className="mr-2 size-4 animate-spin" /> Shanthi is reading your file…
                 </>
               ) : (
                 "Open my case file"
@@ -227,7 +227,7 @@ function FrontDesk() {
         <div className="grid gap-4 sm:grid-cols-3">
           {[
             { n: "01", t: "Drop the paperwork", d: "Job description, resume, rejection email — exactly what they saw." },
-            { n: "02", t: "Nia cross-reads it", d: "Requirements matched line by line against your actual evidence." },
+            { n: "02", t: "Shanthi cross-reads it", d: "Requirements matched line by line against your actual evidence." },
             { n: "03", t: "Leave with a plan", d: "Missing skills, resume fixes and what to do this week." },
           ].map((s) => (
             <div key={s.n} className="paper-card p-5">

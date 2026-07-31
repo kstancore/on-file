@@ -42,7 +42,7 @@ Give 3-5 rejectionReasons, 4-7 missingSkills, 3-5 resumeGaps, 2-4 strengths, 4-6
 export const analyzeApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }): Promise<AnalysisReport> => {
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured yet. Please try again later.");
 
     const hasText =

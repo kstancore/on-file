@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  component: FrontDesk;
+  component: FrontDesk,
 });
 
 type Slot = "jd" | "resume" | "email";

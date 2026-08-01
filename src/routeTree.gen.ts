@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ReportRouteImport } from './routes/report'
+import { Route as ShanthiRouteImport } from './routes/shanthi'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as WorkspaceRouteImport } from './routes/workspace'
@@ -20,9 +22,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportRoute = ReportRouteImport.update({
   id: '/report',
   path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShanthiRoute = ShanthiRouteImport.update({
+  id: '/shanthi',
+  path: '/shanthi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SigninRoute = SigninRouteImport.update({
@@ -43,14 +55,18 @@ const WorkspaceRoute = WorkspaceRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/report': typeof ReportRoute
+  '/shanthi': typeof ShanthiRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/workspace': typeof WorkspaceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/report': typeof ReportRoute
+  '/shanthi': typeof ShanthiRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/workspace': typeof WorkspaceRoute
@@ -58,22 +74,48 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/report': typeof ReportRoute
+  '/shanthi': typeof ShanthiRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/workspace': typeof WorkspaceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/report' | '/signin' | '/signup' | '/workspace'
+  fullPaths:
+    | '/'
+    | '/how-it-works'
+    | '/report'
+    | '/shanthi'
+    | '/signin'
+    | '/signup'
+    | '/workspace'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/report' | '/signin' | '/signup' | '/workspace'
-  id: '__root__' | '/' | '/report' | '/signin' | '/signup' | '/workspace'
+  to:
+    | '/'
+    | '/how-it-works'
+    | '/report'
+    | '/shanthi'
+    | '/signin'
+    | '/signup'
+    | '/workspace'
+  id:
+    | '__root__'
+    | '/'
+    | '/how-it-works'
+    | '/report'
+    | '/shanthi'
+    | '/signin'
+    | '/signup'
+    | '/workspace'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   ReportRoute: typeof ReportRoute
+  ShanthiRoute: typeof ShanthiRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   WorkspaceRoute: typeof WorkspaceRoute
@@ -88,11 +130,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/report': {
       id: '/report'
       path: '/report'
       fullPath: '/report'
       preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shanthi': {
+      id: '/shanthi'
+      path: '/shanthi'
+      fullPath: '/shanthi'
+      preLoaderRoute: typeof ShanthiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signin': {
@@ -121,7 +177,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HowItWorksRoute: HowItWorksRoute,
   ReportRoute: ReportRoute,
+  ShanthiRoute: ShanthiRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   WorkspaceRoute: WorkspaceRoute,

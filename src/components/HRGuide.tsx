@@ -15,24 +15,24 @@ type Props = {
 };
 
 const sizes = {
-  sm: "w-24 sm:w-28",
-  md: "w-40 sm:w-48",
-  lg: "w-56 sm:w-72",
+  sm: "w-20 sm:w-28",
+  md: "w-32 sm:w-48",
+  lg: "w-44 sm:w-72",
 };
 
 export function HRGuide({ pose = "greeting", line, className = "", size = "md", priority }: Props) {
   return (
-    <div className={`flex items-end gap-3 ${className}`}>
+    <div className={`flex flex-col items-center gap-3 sm:flex-row sm:items-end ${className}`}>
       <img
         src={poses[pose]}
         alt="Shanthi, your senior recruiter guide"
         width={768}
         height={1024}
         loading={priority ? "eager" : "lazy"}
-        className={`${sizes[size]} shrink-0 select-none drop-shadow-sm`}
+        className={`${sizes[size]} max-w-full shrink-0 select-none drop-shadow-sm`}
       />
       {line ? (
-        <div className="relative mb-6 w-48 shrink-0 rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-3 text-sm leading-relaxed text-card-foreground shadow-desk sm:w-64">
+        <div className="relative w-full max-w-xs rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-3 text-sm leading-relaxed text-card-foreground shadow-desk sm:mb-6 sm:w-64 sm:shrink-0">
           <span className="mb-1 block font-display text-xs uppercase tracking-widest text-muted-foreground">
             Shanthi · Senior Recruiter
           </span>

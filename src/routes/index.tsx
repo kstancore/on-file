@@ -34,7 +34,7 @@ function Home() {
             <span className="sticky-note inline-block -rotate-1 px-3 py-1 text-xs font-medium uppercase tracking-widest">
               Rejection post-mortem desk
             </span>
-            <h1 className="mt-5 text-4xl leading-[1.05] sm:text-5xl">
+            <h1 className="mt-5 text-3xl leading-[1.1] sm:text-5xl">
               They said “we decided to move forward with other candidates”.
               <span className="block text-primary">Shanthi will tell you what that actually meant.</span>
             </h1>

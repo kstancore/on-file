@@ -32,7 +32,7 @@ function HowItWorksPage() {
         <span className="sticky-note inline-block -rotate-1 px-3 py-1 text-xs font-medium uppercase tracking-widest">
           The process
         </span>
-        <h1 className="mt-5 max-w-3xl text-4xl leading-[1.1] sm:text-5xl">
+        <h1 className="mt-5 max-w-3xl text-3xl leading-[1.15] sm:text-5xl">
           What On File does, and how a session runs.
         </h1>
         <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">

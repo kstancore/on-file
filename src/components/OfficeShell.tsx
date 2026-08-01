@@ -28,6 +28,12 @@ export function OfficeShell({ children }: { children: ReactNode }) {
             <Link to="/" className="transition-colors hover:text-foreground">
               Home
             </Link>
+            <Link to="/how-it-works" className="transition-colors hover:text-foreground">
+              How it works
+            </Link>
+            <Link to="/shanthi" className="transition-colors hover:text-foreground">
+              Shanthi
+            </Link>
             <Link to="/workspace" className="transition-colors hover:text-foreground">
               Workspace
             </Link>

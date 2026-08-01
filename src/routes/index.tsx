@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, Lightbulb, Coffee, Briefcase, FileText, Mail, Quote } from "lucide-react";
+import { Sparkles, Lightbulb, Coffee, Briefcase, FileText } from "lucide-react";
 import { HRGuide } from "@/components/HRGuide";
 import { OfficeShell } from "@/components/OfficeShell";
 import { Button } from "@/components/ui/button";

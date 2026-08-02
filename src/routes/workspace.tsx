@@ -139,11 +139,6 @@ function FrontDesk() {
               They said “we decided to move forward with other candidates”.
               <span className="block text-primary">Shanthi will tell you what that actually meant.</span>
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
-              Drop in the job description, your resume and the rejection email. You get an honest read of why the
-              decision went the other way, the exact skills you're missing, and a plan to close the gap before the next
-              interview.
-            </p>
             <div className="mt-6 flex flex-wrap gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
                 <Sparkles className="size-3.5 text-primary" /> Skill gap breakdown

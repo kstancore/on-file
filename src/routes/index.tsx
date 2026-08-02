@@ -38,11 +38,6 @@ function Home() {
               They said “we decided to move forward with other candidates”.
               <span className="block text-primary">Shanthi will tell you what that actually meant.</span>
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
-              On File is a small, honest office where your rejection gets reviewed properly. Bring the job description,
-              your resume and the rejection email — leave with the real reasons, the skills you're missing and a plan
-              for the next round.
-            </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
                 <Link to="/signup">Create an account</Link>

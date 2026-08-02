@@ -180,7 +180,7 @@ function ReportPage() {
 
       <section className="mx-auto mt-12 max-w-5xl px-4">
         <div className="paper-card flex flex-col items-center gap-4 p-6 text-center">
-          <HRGuide pose="greeting" size="sm" />
+          <HRGuide pose="greeting" size="sm" line="Ready when you are — next file, next round." />
           <p className="max-w-md text-sm text-muted-foreground">
             Got another rejection to decode? Bring it in — patterns across roles tell us even more.
           </p>

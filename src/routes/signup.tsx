@@ -168,7 +168,7 @@ function SignUp() {
         <HRGuide
           pose="verdict"
           size="lg"
-          className="justify-center desk-float md:justify-end"
+          className="justify-center md:justify-end"
           line="Set up your file and we'll get started. Bring the paperwork — all three pieces."
         />
       </section>

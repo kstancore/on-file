@@ -62,7 +62,7 @@ function Home() {
             pose="greeting"
             size="lg"
             priority
-            className="justify-center desk-float md:justify-end"
+            className="justify-center md:justify-end"
             line="I've sat on the other side of that table for fifteen years. Show me the three documents and I'll be straight with you."
           />
         </div>

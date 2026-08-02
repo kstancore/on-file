@@ -125,7 +125,7 @@ function SignIn() {
         <HRGuide
           pose="greeting"
           size="lg"
-          className="justify-center desk-float md:justify-end"
+          className="justify-center md:justify-end"
           line="Welcome back. Sign in and we'll pick up exactly where we left off."
         />
       </section>

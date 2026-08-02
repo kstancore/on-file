@@ -136,9 +136,10 @@ function FrontDesk() {
               Rejection post-mortem
             </span>
             <h1 className="mt-5 text-3xl leading-[1.1] sm:text-5xl">
-              They said “we decided to move forward with other candidates”.
-              <span className="block text-primary">Shanthi will tell you what that actually meant.</span>
+              Rejected? Let's read between the lines.
+              <span className="block text-primary">Shanthi takes it from here.</span>
             </h1>
+
             <div className="mt-6 flex flex-wrap gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
                 <Sparkles className="size-3.5 text-primary" /> Skill gap breakdown

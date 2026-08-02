@@ -30,7 +30,14 @@ function ShanthiPage() {
     <OfficeShell>
       <section className="mx-auto max-w-5xl px-4 pt-10 sm:pt-16">
         <div className="paper-card tape-strip grid items-center gap-6 p-6 sm:p-8 md:grid-cols-[0.8fr_1.2fr]">
-          <HRGuide pose="greeting" size="lg" priority className="justify-center" />
+          <HRGuide
+            pose="greeting"
+            size="lg"
+            priority
+            className="justify-center"
+            line="Fifteen years of hiring panels. I know exactly what gets someone cut — and how to fix it."
+          />
+
           <div>
             <span className="sticky-note inline-block rotate-1 px-3 py-1 text-xs font-medium uppercase tracking-widest">
               Meet your guide

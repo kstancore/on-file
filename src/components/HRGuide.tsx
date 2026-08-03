@@ -1,8 +1,9 @@
 import greeting from "@/assets/hr-greeting.png";
 import thinking from "@/assets/hr-thinking.png";
 import verdict from "@/assets/hr-verdict.png";
+import interview from "@/assets/hr-interview.png";
 
-const poses = { greeting, thinking, verdict } as const;
+const poses = { greeting, thinking, verdict, interview } as const;
 
 export type Pose = keyof typeof poses;
 

@@ -59,7 +59,7 @@ function Home() {
             </div>
           </div>
           <HRGuide
-            pose="greeting"
+            pose="interview"
             size="lg"
             priority
             className="justify-center md:justify-end"

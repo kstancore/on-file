@@ -109,7 +109,7 @@ function SignUp() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="mt-1.5 bg-card"
-                    placeholder="Priya Raman"
+                    placeholder=""
                   />
                 </div>
                 <div>

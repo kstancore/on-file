@@ -1,7 +1,7 @@
-import greeting from "@/assets/hr-greeting.png";
-import thinking from "@/assets/hr-thinking.png";
-import verdict from "@/assets/hr-verdict.png";
-import interview from "@/assets/hr-interview.png";
+import greeting from "@/assets/hr-greeting.webp";
+import thinking from "@/assets/hr-thinking.webp";
+import verdict from "@/assets/hr-verdict.webp";
+import interview from "@/assets/hr-interview.webp";
 
 const poses = { greeting, thinking, verdict, interview } as const;
 
@@ -37,9 +37,11 @@ export function HRGuide({ pose = "greeting", line, className = "", size = "md", 
         <img
           src={poses[pose]}
           alt="Shanthi, your senior recruiter guide"
-          width={768}
-          height={1024}
+          width={800}
+          height={800}
           loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
           className="desk-float relative w-full select-none contrast-[1.08] saturate-[1.12] drop-shadow-[0_10px_18px_color-mix(in_oklab,var(--foreground)_22%,transparent)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03]"
         />
       </div>

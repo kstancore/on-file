@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Coffee, Paperclip, FolderOpen, LogOut, Menu } from "lucide-react";
+import { Coffee, LogOut, Menu } from "lucide-react";
+import logoAsset from "@/assets/on-file-logo.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -30,9 +31,13 @@ export function OfficeShell({ children }: { children: ReactNode }) {
       <header className="border-b border-border bg-card/70 backdrop-blur">
         <div className="mx-auto grid max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-4">
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <FolderOpen className="size-5" />
-            </span>
+            <img
+              src={logoAsset.url}
+              alt="On File logo"
+              width={36}
+              height={36}
+              className="size-9 shrink-0 object-contain"
+            />
             <span className="truncate font-display text-lg sm:text-xl">On File</span>
           </Link>
 
@@ -67,7 +72,10 @@ export function OfficeShell({ children }: { children: ReactNode }) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[80vw] max-w-xs">
-                <SheetTitle className="font-display text-xl">On File</SheetTitle>
+                <SheetTitle className="flex items-center gap-2 font-display text-xl">
+                  <img src={logoAsset.url} alt="" width={28} height={28} className="size-7 object-contain" aria-hidden />
+                  On File
+                </SheetTitle>
                 <nav className="mt-6 flex flex-col gap-1">
                   {links.map((l) => (
                     <Link
@@ -98,7 +106,7 @@ export function OfficeShell({ children }: { children: ReactNode }) {
       <footer className="mt-16 border-t border-border bg-card/60">
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span className="flex items-center gap-2">
-            <Paperclip className="size-3.5 shrink-0" aria-hidden /> On File — the rejection post-mortem desk.
+            <img src={logoAsset.url} alt="" width={16} height={16} className="size-4 shrink-0 object-contain" aria-hidden /> On File — the rejection post-mortem desk.
           </span>
           <span>Your documents are analysed on the fly and never shared.</span>
         </div>

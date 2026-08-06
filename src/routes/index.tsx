@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, Lightbulb, Coffee, Briefcase, FileText } from "lucide-react";
+import { Briefcase, FileText } from "lucide-react";
 import { HRGuide } from "@/components/HRGuide";
 import { OfficeShell } from "@/components/OfficeShell";
 import { Button } from "@/components/ui/button";
@@ -45,17 +45,6 @@ function Home() {
               <Button asChild size="lg" variant="outline">
                 <Link to="/signin">I already have one</Link>
               </Button>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
-                <Sparkles className="size-3.5 text-primary" /> Skill gap breakdown
-              </span>
-              <span className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
-                <Lightbulb className="size-3.5 text-accent-foreground" /> Rewritten resume bullets
-              </span>
-              <span className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
-                <Coffee className="size-3.5 text-desk" /> 90-day comeback plan
-              </span>
             </div>
           </div>
           <HRGuide

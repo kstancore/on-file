@@ -37,12 +37,10 @@ export function HRGuide({ pose = "greeting", line, className = "", size = "md", 
         <img
           src={poses[pose]}
           alt="Shanthi, your senior recruiter guide"
-          width={800}
-          height={800}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={priority ? "high" : "auto"}
-          className="desk-float relative w-full select-none contrast-[1.08] saturate-[1.12] drop-shadow-[0_10px_18px_color-mix(in_oklab,var(--foreground)_22%,transparent)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03]"
+          className="desk-float relative block h-auto w-full select-none object-contain drop-shadow-[0_10px_18px_color-mix(in_oklab,var(--foreground)_22%,transparent)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03]"
         />
       </div>
       {line ? (

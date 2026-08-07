@@ -148,6 +148,32 @@ function SignIn() {
             </Button>
           </form>
 
+          {needsConfirm && (
+            <div className="mt-4 rounded-xl border border-border bg-secondary/40 p-4">
+              <p className="text-sm text-muted-foreground">
+                Your email isn't confirmed yet. Check spam, or have us send the link again.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-3 w-full"
+                onClick={resend}
+                disabled={resending || cooldown > 0}
+              >
+                {resending ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" /> Sending again…
+                  </>
+                ) : cooldown > 0 ? (
+                  `Resend in ${cooldown}s`
+                ) : (
+                  "Resend confirmation email"
+                )}
+              </Button>
+            </div>
+          )}
+
+
           <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
             <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
           </div>

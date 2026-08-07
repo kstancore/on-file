@@ -32,10 +32,36 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [needsConfirm, setNeedsConfirm] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     if (session) navigate({ to: "/workspace", replace: true });
   }, [session, navigate]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  async function resend() {
+    if (!email || cooldown > 0) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setResending(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Confirmation email sent again. Check your inbox and spam folder.");
+    setCooldown(30);
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,11 +69,13 @@ function SignIn() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
+      if (/confirm/i.test(error.message)) setNeedsConfirm(true);
       toast.error(error.message);
       return;
     }
     navigate({ to: "/workspace" });
   }
+
 
   async function google() {
     const result = await lovable.auth.signInWithOAuth("google", {

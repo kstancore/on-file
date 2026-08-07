@@ -37,6 +37,32 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  async function resend() {
+    if (!email || cooldown > 0) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setResending(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Confirmation email sent again. Check your inbox and spam folder.");
+    setCooldown(30);
+  }
+
 
   useEffect(() => {
     if (session) navigate({ to: "/workspace", replace: true });
@@ -96,7 +122,28 @@ function SignUp() {
               <p className="mt-1 text-sm text-muted-foreground">
                 We sent a confirmation link to {email}. Click it and Shanthi will open your workspace.
               </p>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Nothing in your inbox? Check spam, then ask us to send it again.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-3 w-full"
+                onClick={resend}
+                disabled={resending || cooldown > 0}
+              >
+                {resending ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" /> Sending again…
+                  </>
+                ) : cooldown > 0 ? (
+                  `Resend in ${cooldown}s`
+                ) : (
+                  "Resend confirmation email"
+                )}
+              </Button>
             </div>
+
           ) : (
             <>
               <form onSubmit={onSubmit} className="mt-6 space-y-4">

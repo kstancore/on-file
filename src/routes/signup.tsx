@@ -37,6 +37,32 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  async function resend() {
+    if (!email || cooldown > 0) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setResending(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Confirmation email sent again. Check your inbox and spam folder.");
+    setCooldown(30);
+  }
+
 
   useEffect(() => {
     if (session) navigate({ to: "/workspace", replace: true });

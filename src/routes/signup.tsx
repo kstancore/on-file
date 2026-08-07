@@ -122,7 +122,28 @@ function SignUp() {
               <p className="mt-1 text-sm text-muted-foreground">
                 We sent a confirmation link to {email}. Click it and Shanthi will open your workspace.
               </p>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Nothing in your inbox? Check spam, then ask us to send it again.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-3 w-full"
+                onClick={resend}
+                disabled={resending || cooldown > 0}
+              >
+                {resending ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" /> Sending again…
+                  </>
+                ) : cooldown > 0 ? (
+                  `Resend in ${cooldown}s`
+                ) : (
+                  "Resend confirmation email"
+                )}
+              </Button>
             </div>
+
           ) : (
             <>
               <form onSubmit={onSubmit} className="mt-6 space-y-4">

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Eye, EyeOff, Loader2, MailCheck } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,34 +35,7 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
-
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [cooldown]);
-
-  async function resend() {
-    if (!email || cooldown > 0) return;
-    setResending(true);
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email,
-      options: { emailRedirectTo: window.location.origin },
-    });
-    setResending(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success("Confirmation email sent again. Check your inbox and spam folder.");
-    setCooldown(30);
-  }
-
 
   useEffect(() => {
     if (session) navigate({ to: "/workspace", replace: true });
@@ -85,8 +58,11 @@ function SignUp() {
       return;
     }
     if (!data.session) {
-      setSent(true);
-      return;
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        toast.error(signInError.message);
+        return;
+      }
     }
     navigate({ to: "/workspace" });
   }
@@ -115,37 +91,6 @@ function SignUp() {
             Your own desk, your own documents. Nothing is shared with anyone.
           </p>
 
-          {sent ? (
-            <div className="mt-6 rounded-xl border border-border bg-secondary/40 p-5">
-              <MailCheck className="size-6 text-primary" />
-              <h2 className="mt-3 font-display text-xl">Check your email</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                We sent a confirmation link to {email}. Click it and Shanthi will open your workspace.
-              </p>
-              <p className="mt-3 text-xs text-muted-foreground">
-                Nothing in your inbox? Check spam, then ask us to send it again.
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-3 w-full"
-                onClick={resend}
-                disabled={resending || cooldown > 0}
-              >
-                {resending ? (
-                  <>
-                    <Loader2 className="mr-2 size-4 animate-spin" /> Sending again…
-                  </>
-                ) : cooldown > 0 ? (
-                  `Resend in ${cooldown}s`
-                ) : (
-                  "Resend confirmation email"
-                )}
-              </Button>
-            </div>
-
-          ) : (
-            <>
               <form onSubmit={onSubmit} className="mt-6 space-y-4">
                 <div>
                   <Label htmlFor="name">Your name</Label>
@@ -215,8 +160,6 @@ function SignUp() {
               <Button type="button" variant="outline" size="lg" className="w-full" onClick={google}>
                 Continue with Google
               </Button>
-            </>
-          )}
 
           <p className="mt-6 text-sm text-muted-foreground">
             Already have a desk?{" "}

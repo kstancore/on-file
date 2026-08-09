@@ -1,9 +1,9 @@
-import greeting from "@/assets/hr-greeting.webp";
-import thinking from "@/assets/hr-thinking.webp";
-import verdict from "@/assets/hr-verdict.webp";
-import interview from "@/assets/hr-interview.webp";
-
-const poses = { greeting, thinking, verdict, interview } as const;
+const poses = {
+  greeting: "/characters/hr-greeting.webp",
+  thinking: "/characters/hr-thinking.webp",
+  verdict: "/characters/hr-verdict.webp",
+  interview: "/characters/hr-interview.webp",
+} as const;
 
 export type Pose = keyof typeof poses;
 

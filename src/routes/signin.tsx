@@ -31,6 +31,7 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
 
@@ -41,26 +42,49 @@ function SignIn() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
+      if (error || !data.session) {
+        toast.error(
+          error?.message === "Invalid login credentials"
+            ? "Email or password is incorrect. You can reset your password below."
+            : error?.message ?? "We couldn't sign you in. Please try again.",
+        );
+        return;
+      }
+      toast.success("Welcome back — your workspace is ready.");
+      await navigate({ to: "/workspace", replace: true });
+    } catch {
+      toast.error("We couldn't reach the sign-in desk. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    navigate({ to: "/workspace" });
   }
 
 
   async function google() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Google sign-in didn't go through. Try email instead.");
-      return;
+    setGoogleLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/signin`,
+      });
+      if (result.error) {
+        toast.error("Google sign-in didn't go through. Please try again.");
+        return;
+      }
+      if (result.redirected) return;
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        toast.error("Google sign-in finished, but no session was created. Please retry.");
+        return;
+      }
+      await navigate({ to: "/workspace", replace: true });
+    } finally {
+      setGoogleLoading(false);
     }
-    if (result.redirected) return;
-    navigate({ to: "/workspace" });
   }
 
   return (
@@ -99,15 +123,22 @@ function SignIn() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="bg-card pr-10"
                 />
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   aria-pressed={showPassword}
-                  className="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-md text-muted-foreground transition-colors hover:text-foreground"
+                  className="absolute inset-y-0 right-0 h-full text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                </button>
+                </Button>
+              </div>
+              <div className="mt-2 text-right">
+                <Link to="/reset-password" search={{ mode: "request" }} className="text-sm font-medium text-primary hover:underline">
+                  Forgot password?
+                </Link>
               </div>
             </div>
 
@@ -125,8 +156,8 @@ function SignIn() {
           <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
             <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
           </div>
-          <Button type="button" variant="outline" size="lg" className="w-full" onClick={google}>
-            Continue with Google
+          <Button type="button" variant="outline" size="lg" className="w-full" onClick={google} disabled={loading || googleLoading}>
+            {googleLoading ? <><Loader2 className="size-4 animate-spin" /> Connecting…</> : "Continue with Google"}
           </Button>
 
           <p className="mt-6 text-sm text-muted-foreground">

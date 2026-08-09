@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/reset-password")({
   validateSearch: (search: Record<string, unknown>) => ({
-    mode: search.mode === "request" ? ("request" as const) : undefined,
+    mode: search["mode"] === "request" ? ("request" as const) : undefined,
   }),
   head: () => ({
     meta: [

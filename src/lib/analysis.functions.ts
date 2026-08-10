@@ -9,11 +9,12 @@ const filePart = z.object({
 });
 
 const InputSchema = z.object({
-  jobDescription: z.string().trim().max(30_000).optional().default(""),
-  resumeText: z.string().trim().max(30_000).optional().default(""),
-  rejectionEmail: z.string().trim().max(20_000).optional().default(""),
+  jobDescription: z.string().trim().max(120_000).optional().default(""),
+  resumeText: z.string().trim().max(120_000).optional().default(""),
+  rejectionEmail: z.string().trim().max(60_000).optional().default(""),
   files: z.array(filePart).max(3).optional().default([]),
 });
+
 
 const SYSTEM_PROMPT = `You are Shanthi, a sharp senior technical recruiter with 15 years of hiring experience.
 You read a candidate's job description, resume and the rejection email they received, then explain — directly, specifically and without flattery — why they were most likely rejected and exactly what to fix.
@@ -71,25 +72,34 @@ export const analyzeApplication = createServerFn({ method: "POST" })
       }
     }
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey },
-      body: JSON.stringify({
-        model: "google/gemini-3.6-flash",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content },
-        ],
-        response_format: { type: "json_object" },
-      }),
+    const body = JSON.stringify({
+      model: "google/gemini-3.6-flash",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content },
+      ],
+      response_format: { type: "json_object" },
     });
+
+    let res: Response | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey },
+        body,
+      });
+      if (res.status < 500) break;
+      await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+    }
+    if (!res) throw new Error("Couldn't reach the analysis desk. Try again.");
 
     if (res.status === 429) throw new Error("Shanthi's desk is swamped right now — try again in a minute.");
     if (res.status === 402) throw new Error("AI credits are used up. Add credits to keep analysing.");
     if (!res.ok) {
-      const body = await res.text();
-      throw new Error(`Analysis failed (${res.status}): ${body.slice(0, 300)}`);
+      const errText = await res.text();
+      throw new Error(`Analysis failed (${res.status}): ${errText.slice(0, 300)}`);
     }
+
 
     const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
     const raw = json.choices?.[0]?.message?.content ?? "";

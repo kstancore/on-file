@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { Briefcase, FileText, Mail, Loader2, Upload, X, Sparkles, Coffee, Lightbulb } from "lucide-react";
 import { analyzeApplication } from "@/lib/analysis.functions";
 import { saveReport } from "@/lib/analysis-types";
+import { extractFile } from "@/lib/extract-file";
+
 import { HRGuide } from "@/components/HRGuide";
 import { useAuth } from "@/hooks/useAuth";
 import { OfficeShell } from "@/components/OfficeShell";
@@ -34,6 +36,7 @@ export const Route = createFileRoute("/workspace")({
 });
 
 type Slot = "jd" | "resume" | "email";
+type Attachment = { name: string; mimeType: string; dataUrl: string };
 
 const MAX_BYTES = 8 * 1024 * 1024;
 
@@ -42,38 +45,52 @@ function FrontDesk() {
   const { session, loading: authLoading } = useAuth();
   const analyze = useServerFn(analyzeApplication);
   const [text, setText] = useState<Record<Slot, string>>({ jd: "", resume: "", email: "" });
-  const [files, setFiles] = useState<Partial<Record<Slot, { name: string; mimeType: string; dataUrl: string }>>>({});
+  const [files, setFiles] = useState<Partial<Record<Slot, Attachment>>>({});
+  const [notes, setNotes] = useState<Partial<Record<Slot, string>>>({});
+  const [reading, setReading] = useState<Partial<Record<Slot, boolean>>>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !session) navigate({ to: "/signin", replace: true });
   }, [authLoading, session, navigate]);
 
-
   async function attach(slot: Slot, file: File | undefined) {
     if (!file) return;
+    if (file.size === 0) {
+      toast.error("That file is empty — pick another one or paste the text.");
+      return;
+    }
     if (file.size > MAX_BYTES) {
       toast.error("That file is over 8MB — paste the text instead.");
       return;
     }
-    const dataUrl = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-    setFiles((prev) => ({
-      ...prev,
-      [slot]: { name: file.name, mimeType: file.type || "application/octet-stream", dataUrl },
-    }));
+    setReading((prev) => ({ ...prev, [slot]: true }));
+    try {
+      const result = await extractFile(file);
+      setFiles((prev) => ({ ...prev, [slot]: result.file }));
+      setNotes((prev) => ({ ...prev, [slot]: `${result.name} — ${result.note}` }));
+      if (result.text) {
+        setText((prev) => ({
+          ...prev,
+          [slot]: prev[slot].trim() ? `${prev[slot].trim()}\n\n${result.text}` : result.text,
+        }));
+      }
+      toast.success(result.note);
+    } catch (err) {
+      setNotes((prev) => ({ ...prev, [slot]: undefined }));
+      toast.error(err instanceof Error ? err.message : "Couldn't read that file — paste the text instead.");
+    } finally {
+      setReading((prev) => ({ ...prev, [slot]: false }));
+    }
+  }
+
+  function clearAttachment(slot: Slot) {
+    setFiles((prev) => ({ ...prev, [slot]: undefined }));
+    setNotes((prev) => ({ ...prev, [slot]: undefined }));
   }
 
   async function onSubmit() {
-    const attached = Object.values(files).filter(Boolean) as Array<{
-      name: string;
-      mimeType: string;
-      dataUrl: string;
-    }>;
+    const attached = Object.values(files).filter(Boolean) as Attachment[];
     if (!text.jd.trim() && !text.resume.trim() && !text.email.trim() && attached.length === 0) {
       toast.error("Shanthi needs at least the job description and your resume.");
       return;
@@ -96,6 +113,7 @@ function FrontDesk() {
       setLoading(false);
     }
   }
+
 
   const slots: Array<{
     key: Slot;
@@ -185,30 +203,34 @@ function FrontDesk() {
                   placeholder={placeholder}
                   className="mt-3 min-h-40 resize-y bg-card text-sm"
                 />
-                <div className="mt-3 flex items-center justify-between gap-2">
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                   <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-primary hover:underline">
-                    <Upload className="size-3.5" />
-                    Attach file
+                    {reading[key] ? <Loader2 className="size-3.5 animate-spin" /> : <Upload className="size-3.5" />}
+                    {reading[key] ? "Reading file…" : "Attach file"}
                     <input
                       type="file"
                       accept={accept}
                       className="hidden"
-                      onChange={(e) => attach(key, e.target.files?.[0])}
+                      disabled={reading[key]}
+                      onChange={(e) => {
+                        void attach(key, e.target.files?.[0]);
+                        e.target.value = "";
+                      }}
                     />
                   </label>
                   {files[key] ? (
                     <span className="flex max-w-[60%] items-center gap-1 truncate rounded-full bg-note px-2 py-1 text-[11px] text-note-foreground">
                       <span className="truncate">{files[key]!.name}</span>
-                      <button
-                        type="button"
-                        aria-label={`Remove ${files[key]!.name}`}
-                        onClick={() => setFiles((prev) => ({ ...prev, [key]: undefined }))}
-                      >
+                      <button type="button" aria-label={`Remove ${files[key]!.name}`} onClick={() => clearAttachment(key)}>
                         <X className="size-3" />
                       </button>
                     </span>
                   ) : null}
+                  {notes[key] ? (
+                    <p className="w-full text-[11px] leading-snug text-muted-foreground">{notes[key]}</p>
+                  ) : null}
                 </div>
+
               </div>
             ))}
           </div>

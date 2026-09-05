@@ -34,6 +34,7 @@ function SignUp() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -44,14 +45,28 @@ function SignUp() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedName = fullName.trim();
+    if (!normalizedName || !normalizedEmail) {
+      toast.error("Enter your name and email.");
+      return;
+    }
+    if (password.length < 8) {
+      toast.error("Use at least 8 characters for your password.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error("The passwords don't match.");
+      return;
+    }
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/signin`,
-          data: { full_name: fullName.trim() },
+          emailRedirectTo: window.location.origin,
+          data: { full_name: normalizedName },
         },
       });
       if (error) {
@@ -62,15 +77,20 @@ function SignUp() {
         );
         return;
       }
-      if (!data.session) {
-        toast.error("Your account was created, but sign-in did not finish. Please use the sign-in page.");
-        await navigate({ to: "/signin", replace: true });
+      if (!data.session || !data.user) {
+        toast.error("This email may already have an account. Try signing in or resetting your password.");
         return;
       }
+      const { error: profileError } = await supabase.from("profiles").upsert({
+        id: data.user.id,
+        full_name: normalizedName,
+        updated_at: new Date().toISOString(),
+      });
+      if (profileError) console.error("Profile setup failed", profileError);
       toast.success("Your account is ready. Welcome to On File.");
       await navigate({ to: "/workspace", replace: true });
-    } catch {
-      toast.error("We couldn't create your account. Please try again.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "We couldn't create your account. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -87,12 +107,15 @@ function SignUp() {
         return;
       }
       if (result.redirected) return;
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
         toast.error("Google sign-up finished, but no session was created. Please retry.");
         return;
       }
+      toast.success("Your account is ready. Welcome to On File.");
       await navigate({ to: "/workspace", replace: true });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Google sign-up didn't go through. Please try again.");
     } finally {
       setGoogleLoading(false);
     }
@@ -144,11 +167,11 @@ function SignUp() {
                       type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
                       required
-                      minLength={6}
+                      minLength={8}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="bg-card pr-10"
-                      placeholder="At least 6 characters"
+                      placeholder="At least 8 characters"
                     />
                     <Button
                       type="button"
@@ -164,7 +187,21 @@ function SignUp() {
                   </div>
                 </div>
 
-                <Button type="submit" size="lg" className="w-full" disabled={loading}>
+                <div>
+                  <Label htmlFor="confirm-password">Confirm password</Label>
+                  <Input
+                    id="confirm-password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    required
+                    minLength={8}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="mt-1.5 bg-card"
+                  />
+                </div>
+
+                <Button type="submit" size="lg" className="w-full" disabled={loading || googleLoading}>
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" /> Setting up your desk…

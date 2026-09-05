@@ -28,15 +28,16 @@ export const Route = createFileRoute("/reset-password")({
 
 function ResetPassword() {
   const navigate = useNavigate();
-  const { mode } = Route.useSearch();
   const [recoveryReady, setRecoveryReady] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
 
   useEffect(() => {
-    const isRecoveryLink = window.location.hash.includes("type=recovery");
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const isRecoveryLink = params.get("type") === "recovery";
     if (isRecoveryLink) setRecoveryReady(true);
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") setRecoveryReady(true);
@@ -44,7 +45,7 @@ function ResetPassword() {
     return () => data.subscription.unsubscribe();
   }, []);
 
-  const requestMode = mode === "request" && !recoveryReady;
+  const requestMode = !recoveryReady;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,6 +56,7 @@ function ResetPassword() {
           redirectTo: `${window.location.origin}/reset-password`,
         });
         if (error) throw error;
+        setRequestSent(true);
         toast.success("Password reset link sent. Check your inbox and spam folder.");
         return;
       }
@@ -79,7 +81,11 @@ function ResetPassword() {
           <p className="mt-1 text-sm text-muted-foreground">
             {requestMode ? "We'll send a secure recovery link to your email." : "Use at least 6 characters for your new password."}
           </p>
-          <form onSubmit={submit} className="mt-6 space-y-4">
+          {requestSent ? (
+            <div className="mt-6 rounded-md border border-border bg-muted p-4 text-sm text-foreground" role="status">
+              Check your inbox and spam folder. Open the link in that email to choose a new password.
+            </div>
+          ) : <form onSubmit={submit} className="mt-6 space-y-4">
             {requestMode ? (
               <div>
                 <Label htmlFor="recovery-email">Email</Label>
@@ -99,7 +105,7 @@ function ResetPassword() {
             <Button type="submit" size="lg" className="w-full" disabled={loading}>
               {loading ? <><Loader2 className="size-4 animate-spin" /> Please wait…</> : requestMode ? "Send reset link" : "Update password"}
             </Button>
-          </form>
+          </form>}
           <Link to="/signin" className="mt-6 inline-block text-sm font-medium text-primary hover:underline">Back to sign in</Link>
         </div>
         <HRGuide pose="greeting" size="lg" className="justify-center md:justify-end" line="Locked out? No worry. We'll get your account back in order." />

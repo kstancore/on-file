@@ -41,10 +41,15 @@ function SignIn() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail || !password) {
+      toast.error("Enter your email and password.");
+      return;
+    }
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         password,
       });
       if (error || !data.session) {
@@ -55,10 +60,16 @@ function SignIn() {
         );
         return;
       }
+      const { error: verificationError } = await supabase.auth.getUser();
+      if (verificationError) {
+        await supabase.auth.signOut();
+        toast.error("We couldn't verify this login. Please try again.");
+        return;
+      }
       toast.success("Welcome back — your workspace is ready.");
       await navigate({ to: "/workspace", replace: true });
-    } catch {
-      toast.error("We couldn't reach the sign-in desk. Please try again.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "We couldn't reach the sign-in desk. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -76,12 +87,15 @@ function SignIn() {
         return;
       }
       if (result.redirected) return;
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
         toast.error("Google sign-in finished, but no session was created. Please retry.");
         return;
       }
+      toast.success("Welcome — your workspace is ready.");
       await navigate({ to: "/workspace", replace: true });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Google sign-in didn't go through. Please try again.");
     } finally {
       setGoogleLoading(false);
     }
@@ -142,7 +156,7 @@ function SignIn() {
               </div>
             </div>
 
-            <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            <Button type="submit" size="lg" className="w-full" disabled={loading || googleLoading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" /> Checking you in…

@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Coffee, LogOut, Menu } from "lucide-react";
 import logoAsset from "@/assets/on-file-logo.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,12 +19,16 @@ const links = [
 export function OfficeShell({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   async function signOut() {
     setOpen(false);
-    await supabase.auth.signOut();
-    navigate({ to: "/signin", replace: true });
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    const { error } = await supabase.auth.signOut();
+    if (error) return;
+    await navigate({ to: "/signin", replace: true });
   }
 
   return (
@@ -48,9 +53,9 @@ export function OfficeShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
             {loading ? null : session ? (
-              <button onClick={signOut} className="flex items-center gap-1.5 transition-colors hover:text-foreground">
+              <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground">
                 <LogOut className="size-3.5" /> Sign out
-              </button>
+              </Button>
             ) : (
               <Button asChild size="sm">
                 <Link to="/signin">Sign in</Link>
@@ -89,12 +94,13 @@ export function OfficeShell({ children }: { children: ReactNode }) {
                     </Link>
                   ))}
                   {loading ? null : session ? (
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={signOut}
-                      className="mt-2 flex items-center gap-2 rounded-md px-2 py-2.5 text-base text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      className="mt-2 h-auto justify-start px-2 py-2.5 text-base text-muted-foreground hover:text-foreground"
                     >
                       <LogOut className="size-4" /> Sign out
-                    </button>
+                    </Button>
                   ) : null}
                 </nav>
               </SheetContent>

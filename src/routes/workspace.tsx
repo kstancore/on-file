@@ -148,7 +148,7 @@ function FrontDesk() {
   return (
     <OfficeShell>
       <section className="mx-auto max-w-5xl px-4 pt-10 sm:pt-16">
-        <div className="grid items-center gap-8 md:grid-cols-[1.15fr_0.85fr]">
+          <div className="grid items-center gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <div>
             <span className="sticky-note inline-block -rotate-1 px-3 py-1 text-xs font-medium uppercase tracking-widest">
               Rejection post-mortem
@@ -171,10 +171,9 @@ function FrontDesk() {
             </div>
           </div>
           <HRGuide
-            pose="greeting"
-            size="lg"
+            pose="interview"
             priority
-            className="justify-center md:justify-end"
+            layout="compact"
             line="I've sat on the other side of that table. Show me the three documents and I'll be straight with you."
           />
         </div>
@@ -220,10 +219,17 @@ function FrontDesk() {
                   </label>
                   {files[key] ? (
                     <span className="flex max-w-[60%] items-center gap-1 truncate rounded-full bg-note px-2 py-1 text-[11px] text-note-foreground">
-                      <span className="truncate">{files[key]!.name}</span>
-                      <button type="button" aria-label={`Remove ${files[key]!.name}`} onClick={() => clearAttachment(key)}>
+                      <span className="truncate">{files[key]?.name}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-5 rounded-full"
+                        aria-label={`Remove ${files[key]?.name ?? "attachment"}`}
+                        onClick={() => clearAttachment(key)}
+                      >
                         <X className="size-3" />
-                      </button>
+                      </Button>
                     </span>
                   ) : null}
                   {notes[key] ? (
